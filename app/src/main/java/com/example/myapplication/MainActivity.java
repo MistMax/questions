@@ -9,15 +9,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
     Button yesBtn;
     Button noBtn;
     Button showAnswer;
+    Toast qResultToast;
     TextView questionTextView;
-    int counter = 0;
-    Question[] answerUser =new Question[5];
+    int answerCount = 0;
+    int questionIndex = 0;
     Question[] questions = {
             new Question(R.string.question1, true),
             new Question(R.string.question2, true),
@@ -25,83 +24,80 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.question4, true),
             new Question(R.string.question5, false)
             };
-    int questionIndex = 0;
+    String[] questionsAndAnswers = new String[questions.length];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("MainActivity", "onCreate() called");
-        if (savedInstanceState != null)
-            questionIndex = savedInstanceState.getInt("questionIndex", 0);
         yesBtn = findViewById(R.id.yesBtn);
         noBtn = findViewById(R.id.noBtn);
         showAnswer = findViewById(R.id.answer);
         questionTextView = findViewById(R.id.questionTextView);
+        if (savedInstanceState != null) {
+            questionIndex = savedInstanceState.getInt("questionIndex", 0);
+            questionsAndAnswers = savedInstanceState.getStringArray("qAndAnswers");
+            answerCount = savedInstanceState.getInt("counter");
+        }
         questionTextView.setText(questions[questionIndex].getQuestionText());
-        yesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkAnswer(true);
+        View.OnClickListener yesNoOCL = view -> {
+            switch (view.getId()) {
+                case (R.id.noBtn): {
+                    checkAnswer(false);
+                    break;
+                }
+                case (R.id.yesBtn): {
+                    checkAnswer(true);
+                    break;
+                }
             }
-        });
-        noBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkAnswer(false);
+            questionTextView.setText(questions[questionIndex].getQuestionText());
+            questionIndex++;
+            if (questionIndex == questions.length) {
+                questionIndex = 0;
+                Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+                intent.putExtra("qAndAnswers", questionsAndAnswers);
+                intent.putExtra("counter", answerCount);
+                startActivity(intent);
             }
-        });
+            questionTextView.setText(questions[questionIndex].getQuestionText());
+        };
+        noBtn.setOnClickListener(yesNoOCL);
+        yesBtn.setOnClickListener(yesNoOCL);
         showAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AnswerActivity.class);
-                intent.putExtra("answer", questions[questionIndex].isAnswerTrue());
-                intent.putExtra("count", counter);
+                intent.putExtra("trueAnswer", questions[questionIndex].isAnswerTrue());
+                intent.putExtra("counter", answerCount);
                 startActivity(intent);
             }
         });
-    }
-    private String attachAnswerQuestion(String question, boolean answer) {
-        return question + " - " + "ваш ответ: " + (answer ? getString(R.string.yes) : getString(R.string.no));
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt("questionIndex", questionIndex);
+        savedInstanceState.putInt("counter", answerCount);
+        savedInstanceState.putStringArray("qAndAnswers", questionsAndAnswers);
+    }
 
+    private void checkAnswer(Boolean answer) {
+        if (qResultToast != null) {
+            qResultToast.cancel();
+        }
+        if (questions[questionIndex].isAnswerTrue() == answer) {
+            qResultToast = Toast.makeText(MainActivity.this, "Ответ верный", Toast.LENGTH_LONG);
+            answerCount++;
+        } else {
+            qResultToast = Toast.makeText(MainActivity.this, "Ответ не верный", Toast.LENGTH_LONG);
+        }
+        questionsAndAnswers[questionIndex] = attachAnswerQuestion(getString(questions[questionIndex].getQuestionText()), answer);
+        qResultToast.show();
     }
-    public void checkAnswer(boolean btn) {
-        if (questions[questionIndex].isAnswerTrue() && btn || (!questions[questionIndex].isAnswerTrue() && !btn)) {
-            Toast.makeText(MainActivity.this, "Правильно", Toast.LENGTH_SHORT).show();
-            counter++;
-        }else
-            Toast.makeText(MainActivity.this, "Не верный ответ", Toast.LENGTH_SHORT).show();
-        questionIndex = (questionIndex+1)%questions.length;
-        questionTextView.setText(questions[questionIndex].getQuestionText());
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d("MainActivity", "onStart() - CALLED");
-    }
-    @Override
-    public  void onResume() {
-        super.onResume();
-        Log.d("MainActivity", "onResume() - CALLED");
-    }
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("MainActivity", "onPause() - CALLED");
-    }
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d("MainActivity", "onStop() - CALLED");
-    }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("MainActivity", "onDestroy() - CALLED");
+
+    private String attachAnswerQuestion(String questions, boolean answer) {
+        return questions + " - " + "ваш ответ: " + (answer ? getString(R.string.yes) : getString(R.string.no));
     }
 }
