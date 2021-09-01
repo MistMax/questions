@@ -9,4 +9,5 @@
     <string name="no">Нет</string>
     <string name="showAnswer">Показать ответ</string>
     <string name="answerTextView">Правильный ответ</string>
+    <string name="scores">Количество баллов</string>
 </resources>

@@ -11,9 +11,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/scores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:text="@string/scores"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/q_and_answers"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/youScores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/scores"
+        tools:layout_editor_absoluteX="205dp" />
 
 
 </android.support.constraint.ConstraintLayout>
