@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         showAnswer = findViewById(R.id.answer);
         questionTextView = findViewById(R.id.questionTextView);
         if (savedInstanceState != null) {
-            questionIndex = savedInstanceState.getInt("questionIndex", 0);
+            questionIndex = savedInstanceState.getInt("questionIndex");
             questionsAndAnswers = savedInstanceState.getStringArray("qAndAnswers");
             answerCount = savedInstanceState.getInt("counter");
         }
@@ -76,11 +77,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("questionIndex", questionIndex);
-        savedInstanceState.putInt("counter", answerCount);
-        savedInstanceState.putStringArray("qAndAnswers", questionsAndAnswers);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt("questionIndex", questionIndex);
+        outState.putInt("counter", answerCount);
+        outState.putStringArray("qAndAnswers", questionsAndAnswers);
+        super.onSaveInstanceState(outState);
     }
 
     private void checkAnswer(Boolean answer) {
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         qResultToast.show();
     }
 
-    private String attachAnswerQuestion(String questions, boolean answer) {
-        return questions + " - " + "ваш ответ: " + (answer ? getString(R.string.yes) : getString(R.string.no));
+    private String attachAnswerQuestion(String question, boolean answer) {
+        return question + " - " + "ваш ответ: " + (answer ? getString(R.string.yes) : getString(R.string.no));
     }
 }

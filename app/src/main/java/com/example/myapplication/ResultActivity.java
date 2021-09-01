@@ -5,18 +5,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 public class ResultActivity extends AppCompatActivity {
-    TextView qAndAnswers;
+    TextView q_AndAnswers;
     String[] resultArr;
-    String result;
+    int result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-        qAndAnswers = findViewById(R.id.q_and_answers);
+        q_AndAnswers = findViewById(R.id.q_and_answers);
         resultArr = getIntent().getStringArrayExtra("qAndAnswer");
         for (int i = 0; i < resultArr.length; i++) {
-            qAndAnswers.append(resultArr[i] + "\n");
+            q_AndAnswers.append(resultArr[i] + "\n");
         }
     }
 }
